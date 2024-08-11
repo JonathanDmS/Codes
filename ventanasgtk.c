@@ -1,33 +1,32 @@
 #include <gtk/gtk.h>
 
-//event to close window on click
-static void on_button_clicked (GtkWidget *widget, gpointer window) {
-    gtk_window_close(GTK_WINDOW(window));
+gint delete_event(GtkWidget *widget, GdkEvent *event, gpointer data) {
+    g_print("delete event occurred\n");
+    /* Change TRUE to FALSE and the main window will be destroyed with
+    * a "delete_event." */
+    return TRUE;
 }
 
-static void activate (GtkApplication *app, gpointer user_data) {
+void destroy(GtkWidget *widget, gpointer data) {
+    gtk_main_quit();
+}
+
+int main(int argc, char *argv[]) {
     GtkWidget *window;
     GtkWidget *button;
 
-    window = gtk_application_window_new (app);
-    gtk_window_set_title (GTK_WINDOW (window), "Window");
-    gtk_window_set_default_size (GTK_WINDOW (window), 500, 500);
+    gtk_init(&argc, &argv);
 
-    button = gtk_button_new_with_label ("Close");
-    g_signal_connect (button, "clicked", G_CALLBACK (on_button_clicked), NULL);
-    gtk_container_add (GTK_CONTAINER (window), button);
-    gtk_widget_show (button);
-    gtk_window_present (GTK_WINDOW (window));
-}
-
-int main (int argc, char **argv) {
-    GtkApplication *app;
-    int status;
-
-    app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
-    g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-    status = g_application_run (G_APPLICATION (app), argc, argv);
-    g_object_unref (app);
-
-    return status;
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(delete_event), NULL);
+    g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(destroy), NULL);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+    button = gtk_button_new_with_label("Dimas Morelos Jonathan");
+    g_signal_connect_swapped(G_OBJECT(button), "clicked", G_CALLBACK(gtk_widget_destroy), G_OBJECT(window));
+    gtk_container_add(GTK_CONTAINER(window), button);
+    gtk_widget_show(button);
+    gtk_widget_show(window);
+    gtk_main();
+    
+    return 0;
 }
