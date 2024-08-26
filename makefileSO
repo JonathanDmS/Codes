@@ -1,0 +1,13 @@
+holamain.o: holamainlibrary.c
+	gcc -c holamainlibrary.c -o holamain.o
+	
+holaprint.o: holaprintlibrary.c
+	gcc -c holaprintlibrary.c -o holaprint.o
+	
+holaEXE: holamain.o holaprint.o
+	gcc holamain.o holaprint.o -o holaEXE
+	rm holamain.o holaprint.o
+	./holaEXE
+
+clean:
+	rm holamain.o holaprint.o holaEXE
